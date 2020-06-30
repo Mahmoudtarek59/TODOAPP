@@ -14,6 +14,7 @@ final GoogleSignIn _googleSignIn = new GoogleSignIn();
 
 
 class LoginScreen extends StatefulWidget {
+
   String message;
   LoginScreen({Key key,this.message}):super(key:key);
 
@@ -27,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
   String _email;
 
   String _password;
-
+  bool isloading=false;
   @override
   void initState() {
     super.initState();
@@ -44,15 +45,26 @@ class _LoginScreenState extends State<LoginScreen> {
 
   //google sign in
   void _googleSignin() async {
+    setState(() {
+      isloading=true;
+    });
     bool trusted = await Provider.of<Auth>(context,listen: false).signWithGmail(email: _email,password: _password);
+    setState(() {
+      isloading=false;
+    });
     if(trusted){
       Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>TaskScreen()), (route) => false);
     }
+
   }
 
   void _login() async {
+
     final formData = _globalKey.currentState;
     if (formData.validate()) {
+      setState(() {
+        isloading=true;
+      });
       formData.save();
       String message = await Provider.of<Auth>(context,listen: false).logInWithEmail(email: _email,password: _password);
       _scaffoldKey.currentState
@@ -60,7 +72,9 @@ class _LoginScreenState extends State<LoginScreen> {
       if(message == 'Done'){
         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>TaskScreen()), (route) => false);
       }
-
+      setState(() {
+        isloading=false;
+      });
     }
   }
 
@@ -118,7 +132,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 child: SingleChildScrollView(
-                  child: Form(
+                  child: isloading?Center(child: CircularProgressIndicator(
+                    backgroundColor: Colors.blueGrey[700],
+                  ),):Form(
                     key: _globalKey,
                     child: Padding(
                       padding: EdgeInsets.all(20),

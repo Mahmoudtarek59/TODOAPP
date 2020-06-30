@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:semicolontodoapp/constant.dart';
 import 'package:semicolontodoapp/model/task.dart';
@@ -10,6 +11,12 @@ import 'package:semicolontodoapp/view/screens/signup_screen.dart';
 import 'package:semicolontodoapp/view/screens/task_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    //to prevent landscape mode
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   runApp(MyApp());
 }
 
